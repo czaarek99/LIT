@@ -9,6 +9,10 @@ export class AppElement extends LitElement {
 			test: {
 				type: String,
 				reflect: true
+			},
+			todos: {
+				type: Array,
+				reflect: true
 			}
 		}
 	}
@@ -19,32 +23,63 @@ export class AppElement extends LitElement {
 				height: 100%;
 			}
 
+			h1 {
+				text-align: center;
+			}
+
 			main {
 				display: flex;
 				align-items: center;
 				justify-content: center;
 				height: 100%;
 			}
+
+			.list {
+				width: 500px;
+				border: 1px solid grey;
+				border-radius: 3px;
+			}
 		`
 	}
 
 	constructor() {
 		super();
-		this.test = "hi";
 
-		setInterval(() => {
-			this.setAttribute("test", new Date().toString());
-		}, 1000);
+		this.onClick = this.onClick.bind(this);
+
+		this.todos = [
+			{
+				id: 0,
+				text: "test todo",
+				done: true
+			}
+		]
+
+	}
+
+	onClick(todo) {
+		const copy = [...this.todos];
+		todo.done = !todo.done;
+
+		this.setAttribute("todos", copy);
 	}
 
 	render() {
+		const todos = this.todos.map((todo) => {
+			return html`
+				<todo-element .todo="${todo}" .onCheck="${this.onClick}"></todo-element>
+			`
+		});
+
 		return html`
 			<main>
-				<div>
+				<div class="list">
 					<h1>
 						My todos
 					</h1>
-					<todo-element></todo-element>
+					<div>
+						${todos}
+					</div>
 				</div>
 			</main>
 		`;

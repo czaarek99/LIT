@@ -10,7 +10,11 @@
 	"author": "",
 	"license": "ISC",
 	"dependencies": {
+		"fa-icons": "^0.1.5",
 		"lit-element": "^2.2.0",
 		"typescript": "^3.5.3"
+	},
+	"devDependencies": {
+		"@fortawesome/fontawesome-free": "^5.9.0"
 	}
 }
