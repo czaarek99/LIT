@@ -1,5 +1,5 @@
 import {
-	LitElement, html, customElement, property
+	LitElement, html, css
 } from "lit-element";
 
 export class AppElement extends LitElement {
@@ -13,6 +13,21 @@ export class AppElement extends LitElement {
 		}
 	}
 
+	static get styles() {
+		return css`
+			:host {
+				height: 100%;
+			}
+
+			main {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				height: 100%;
+			}
+		`
+	}
+
 	constructor() {
 		super();
 		this.test = "hi";
@@ -24,9 +39,14 @@ export class AppElement extends LitElement {
 
 	render() {
 		return html`
-			<p>
-				${this.test}
-			</p>
+			<main>
+				<div>
+					<h1>
+						My todos
+					</h1>
+					<todo-element></todo-element>
+				</div>
+			</main>
 		`;
 	}
 
