@@ -29,13 +29,19 @@ export class TodoElement extends LitElement {
 
 			.text {
 				margin: 0 0 0 10px;
-				font-size: 25px;
+				font-size: 30px;
+				color: var(--text-color);
 			}
+
+			.doneText {
+				text-decoration: line-through;
+			}
+
 		`
 	}
 
 	onClick() {
-		this.onCheck(this.todo);
+		this.onCheck(this.todo.id);
 	}
 
 	render() {
@@ -46,26 +52,35 @@ export class TodoElement extends LitElement {
 			done
 		} = this.todo;
 
+		let textClases = "text";
+
 		if(done) {
+			textClases += " doneText";
+
 			checkIcon = html`
 				<fa-icon class="fas fa-check-circle"
-					path-prefix="../node_modules/" />
+					color="#ffffff"
+					path-prefix="../node_modules/" >
+				</fa-icon>
 			`;
 		} else {
 			checkIcon = html`
 				<fa-icon class="far fa-circle"
-					path-prefix="../node_modules/" />
+					color="#ffffff"
+					path-prefix="../node_modules/">
+				</fa-icon>
 			`;
 		}
 
-
 		return html`
 			<div class="todo">
-				<span @click="${this.onClick}">
+				<span @click="${this.onClick}"
+					class="iconContainer">
+
 					${checkIcon}
 				</span>
 
-				<p class="text">
+				<p class=${textClases}>
 					${text}
 				</p>
 			</div>

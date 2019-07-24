@@ -2,16 +2,18 @@ import {
 	LitElement, html, css
 } from "lit-element";
 
+let todoId = 0;
+
 export class AppElement extends LitElement {
 
 	static get properties() {
 		return {
-			test: {
-				type: String,
-				reflect: true
-			},
 			todos: {
 				type: Array,
+				reflect: true
+			},
+			newTodoText: {
+				type: String,
 				reflect: true
 			}
 		}
@@ -21,10 +23,13 @@ export class AppElement extends LitElement {
 		return css`
 			:host {
 				height: 100%;
+				--border-color: grey;
 			}
 
 			h1 {
 				text-align: center;
+				font-size: 40px;
+				color: var(--text-color);
 			}
 
 			main {
@@ -34,10 +39,50 @@ export class AppElement extends LitElement {
 				height: 100%;
 			}
 
+			.newTodoContainer {
+				display: flex;
+				align-items: center;
+				background-color: #202121;
+				border-top: 1px solid var(--border-color);
+				transition: 509ms background-color;
+			}
+
+			.newTodoContainer:hover {
+				background-color: #282929;
+			}
+
+			.addButton {
+				cursor: pointer;
+			}
+
+			input {
+				height: 40px;
+				width: 100%;
+				outline: none;
+				border: none;
+				padding: 10px;
+				color: var(--text-color);
+				background-color: inherit;
+			}
+
 			.list {
 				width: 500px;
-				border: 1px solid grey;
+				border: 1px solid var(--border-color);
 				border-radius: 3px;
+			}
+
+			.iconContainer {
+				cursor: pointer;
+				padding: 0 10px;
+			}
+
+			.statusText {
+				margin: 0;
+				color: var(--text-color);
+				border-top: 1px solid var(--border-color);
+				padding: 5px;
+				font-size: 18px;
+				text-align: right;
 			}
 		`
 	}
@@ -45,31 +90,63 @@ export class AppElement extends LitElement {
 	constructor() {
 		super();
 
-		this.onClick = this.onClick.bind(this);
+		this.onTodoClick = this.onTodoClick.bind(this);
+		this.onAddClick = this.onAddClick.bind(this);
 
-		this.todos = [
-			{
-				id: 0,
-				text: "test todo",
-				done: true
-			}
-		]
-
+		this.newTodoText = "";
+		this.todos = [];
 	}
 
-	onClick(todo) {
+	onTodoClick(id) {
 		const copy = [...this.todos];
-		todo.done = !todo.done;
 
-		this.setAttribute("todos", copy);
+		for(let i = 0; i < copy.length; i++) {
+			const todo = copy[i];
+
+			if(todo.id === id) {
+				copy[i] = Object.assign({}, todo, {
+					done: !todo.done
+				})
+			}
+		}
+
+		this.todos = copy;
+	}
+
+	onAddClick() {
+		if(this.newTodoText) {
+			const newTodo = {
+				id: todoId++,
+				text: this.newTodoText,
+				done: false
+			};
+
+			this.todos = [...this.todos, newTodo];
+			this.newTodoText = "";
+		}
+	}
+
+	onChange(event) {
+		this.newTodoText = event.target.value;
 	}
 
 	render() {
 		const todos = this.todos.map((todo) => {
 			return html`
-				<todo-element .todo="${todo}" .onCheck="${this.onClick}"></todo-element>
+				<todo-element .todo="${todo}" .onCheck="${this.onTodoClick}" />
 			`
 		});
+
+		let finishedTodos = 0;
+		let activeTodos = 0;
+
+		for(const todo of this.todos) {
+			if(todo.done) {
+				finishedTodos++;
+			} else {
+				activeTodos++;
+			}
+		}
 
 		return html`
 			<main>
@@ -77,9 +154,30 @@ export class AppElement extends LitElement {
 					<h1>
 						My todos
 					</h1>
+
+					<div class="newTodoContainer">
+						<input .value="${this.newTodoText}"
+							@change="${this.onChange}"
+							placeholder="Enter a new todo....">
+
+						<span class="iconContainer"
+							@click="${this.onAddClick}">
+
+							<fa-icon class="fas fa-plus"
+								color="#ffffff"
+								class="addButton"
+								path-prefix="../node_modules/" >
+							</fa-icon>
+						</span>
+					</div>
+
 					<div>
 						${todos}
 					</div>
+
+					<p class="statusText"">
+						finished: ${finishedTodos} active: ${activeTodos}
+					</p>
 				</div>
 			</main>
 		`;

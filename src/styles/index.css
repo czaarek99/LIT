@@ -1,6 +1,11 @@
+:root {
+	--text-color: white;
+}
+
 html {
 	font-family: 'Butterfly Kids', cursive;
 	height: 100%;
+	background-color:#1E1F1F;
 }
 
 body {
