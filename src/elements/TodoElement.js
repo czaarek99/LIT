@@ -7,11 +7,18 @@ export class TodoElement extends LitElement {
 		return {
 			todo: {
 				type: Object,
-				reflect: true
 			},
 			onCheck: {
 				type: Function,
-				reflect: false
+			},
+			onRename: {
+				type: Function,
+			},
+			isEditing: {
+				type: Boolean,
+			},
+			editInputValue: {
+				type: String,
 			}
 		}
 	}
@@ -19,6 +26,7 @@ export class TodoElement extends LitElement {
 	static get styles() {
 		return css`
 			.todo {
+				height: 40px;
 				padding: 10;
 				display: flex;
 				align-items: center;
@@ -37,11 +45,39 @@ export class TodoElement extends LitElement {
 				text-decoration: line-through;
 			}
 
+			input {
+				height: 35px;
+				width: 100%;
+				font-size: 30px;
+				outline: none;
+				border: none;
+				padding: 10px;
+				color: var(--text-color);
+				background-color: inherit;
+				font-family: var(--font-family);
+			}
+
 		`
+	}
+
+	onKeyDown(event) {
+		if(event.key === "Enter") {
+			this.onRename(this.todo.id, this.editInputValue);
+			this.isEditing = false;
+		}
 	}
 
 	onClick() {
 		this.onCheck(this.todo.id);
+	}
+
+	onChange(event) {
+		this.editInputValue = event.target.value;
+	}
+
+	onDoubleClick() {
+		this.isEditing = true;
+		this.editInputValue = this.todo.text;
 	}
 
 	render() {
@@ -72,17 +108,33 @@ export class TodoElement extends LitElement {
 			`;
 		}
 
+		let content;
+
+		if(this.isEditing) {
+			content = html`
+				<input .value="${this.editInputValue}"
+					@input="${this.onChange}">
+			`;
+		} else {
+			content = html`
+				<p class=${textClases}>
+					${text}
+				</p>
+			`;
+		}
+
 		return html`
-			<div class="todo">
+			<div class="todo"
+				@keydown="${this.onKeyDown}"
+				@dblclick="${this.onDoubleClick}">
+
 				<span @click="${this.onClick}"
 					class="iconContainer">
 
 					${checkIcon}
 				</span>
 
-				<p class=${textClases}>
-					${text}
-				</p>
+				${content}
 			</div>
 		`
 	}

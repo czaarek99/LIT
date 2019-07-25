@@ -10,11 +10,9 @@ export class AppElement extends LitElement {
 		return {
 			todos: {
 				type: Array,
-				reflect: true
 			},
 			newTodoText: {
 				type: String,
-				reflect: true
 			}
 		}
 	}
@@ -56,6 +54,7 @@ export class AppElement extends LitElement {
 			}
 
 			input {
+				font-size: 20px;
 				height: 40px;
 				width: 100%;
 				outline: none;
@@ -63,6 +62,7 @@ export class AppElement extends LitElement {
 				padding: 10px;
 				color: var(--text-color);
 				background-color: inherit;
+				font-family: var(--font-family);
 			}
 
 			.list {
@@ -92,6 +92,7 @@ export class AppElement extends LitElement {
 
 		this.onTodoClick = this.onTodoClick.bind(this);
 		this.onAddClick = this.onAddClick.bind(this);
+		this.onRename = this.onRename.bind(this);
 
 		this.newTodoText = "";
 		this.todos = [];
@@ -130,10 +131,28 @@ export class AppElement extends LitElement {
 		this.newTodoText = event.target.value;
 	}
 
+	onRename(id, newText) {
+		const copy = [...this.todos];
+
+		for(let i = 0; i < copy.length; i++) {
+			const todo = copy[i];
+
+			if(todo.id === id) {
+				copy[i] = Object.assign({}, todo, {
+					text: newText
+				})
+			}
+		}
+
+		this.todos = copy;
+	}
+
 	render() {
 		const todos = this.todos.map((todo) => {
 			return html`
-				<todo-element .todo="${todo}" .onCheck="${this.onTodoClick}" />
+				<todo-element .todo="${todo}"
+					.onRename="${this.onRename}"
+					.onCheck="${this.onTodoClick}" />
 			`
 		});
 
