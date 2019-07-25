@@ -14,6 +14,9 @@ export class TodoElement extends LitElement {
 			onRename: {
 				type: Function,
 			},
+			onDelete: {
+				type: Function
+			},
 			isEditing: {
 				type: Boolean,
 			},
@@ -39,6 +42,7 @@ export class TodoElement extends LitElement {
 				margin: 0 0 0 10px;
 				font-size: 30px;
 				color: var(--text-color);
+				flex-grow: 2;
 			}
 
 			.doneText {
@@ -57,6 +61,10 @@ export class TodoElement extends LitElement {
 				font-family: var(--font-family);
 			}
 
+			.actionIcon {
+				cursor: pointer;
+			}
+
 		`
 	}
 
@@ -73,6 +81,10 @@ export class TodoElement extends LitElement {
 
 	onChange(event) {
 		this.editInputValue = event.target.value;
+	}
+
+	_onDelete() {
+		this.onDelete(this.todo.id)
 	}
 
 	onDoubleClick() {
@@ -129,14 +141,23 @@ export class TodoElement extends LitElement {
 				@dblclick="${this.onDoubleClick}">
 
 				<span @click="${this.onClick}"
-					class="iconContainer">
+					class="actionIcon">
 
 					${checkIcon}
 				</span>
 
 				${content}
+
+				<span class="actionIcon"
+					@click="${this._onDelete}">
+
+					<fa-icon class="fa fa-trash"
+						color="#ffffff"
+						path-prefix="../node_modules/">
+					</fa-icon>
+				</span>
 			</div>
-		`
+		`;
 	}
 
 }

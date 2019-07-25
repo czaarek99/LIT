@@ -92,10 +92,23 @@ export class AppElement extends LitElement {
 
 		this.onTodoClick = this.onTodoClick.bind(this);
 		this.onAddClick = this.onAddClick.bind(this);
+		this.onDelete = this.onDelete.bind(this);
 		this.onRename = this.onRename.bind(this);
 
 		this.newTodoText = "";
 		this.todos = [];
+	}
+
+	onDelete(id) {
+		const copy = [];
+
+		for(const todo of this.todos) {
+			if(todo.id !== id) {
+				copy.push(todo);
+			}
+		}
+
+		this.todos = copy;
 	}
 
 	onTodoClick(id) {
@@ -151,6 +164,7 @@ export class AppElement extends LitElement {
 		const todos = this.todos.map((todo) => {
 			return html`
 				<todo-element .todo="${todo}"
+					.onDelete="${this.onDelete}"
 					.onRename="${this.onRename}"
 					.onCheck="${this.onTodoClick}" />
 			`
